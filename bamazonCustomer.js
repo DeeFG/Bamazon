@@ -1,6 +1,7 @@
 var mysql = require("mysql");
 var inquirer = require('inquirer');
 var fs = require('fs')
+const Enter = "\n\n***[$̲̅(̲̅ιοο̲̅)̲̅$̲̅]***[$̲̅(̲̅ιοο̲̅)̲̅$̲̅]***[$̲̅(̲̅ιοο̲̅)̲̅$̲̅]___WELCOME to BAMAZON, LETS GET STARTED___[$̲̅(̲̅ιοο̲̅)̲̅$̲̅]***[$̲̅(̲̅ιοο̲̅)̲̅$̲̅]***[$̲̅(̲̅ιοο̲̅)̲̅$̲̅]***\n\n "
 
 var connection = mysql.createConnection({
     host: "localhost",
@@ -14,38 +15,37 @@ var connection = mysql.createConnection({
 connection.connect(function (err) {
     if (err) throw err;
     console.log("connected as id " + connection.threadId);
-    // viewAll();
+    console.log(Enter);
+     // viewAll();
     // updateQuantity();   
     userPrompt();
 });
 
-function userPrompt(){
+function userPrompt() {
 
     inquirer.prompt([
         {
-          type: "input",
-          name: "itemWanted",
-          message: "What item would you like to buy? [1-10]",
-          
-        //   type: "list",
-        //   name: "itemWanted",
-        //   message: "What item would you like to buy? [1-10]",
-        //   choices: ["1", "2", "3", "4", "5","6","7","8","9","10"]
+            type: "input",
+            name: "itemWanted",
+            message: "Please type the item id number you'd like to buy",
+
+            //   type: "list",
+            //   name: "itemWanted",
+            //   message: "What item would you like to buy? [1-10]",
+            //   choices: ["1", "2", "3", "4", "5","6","7","8","9","10"]
         },
         {
             type: "input",
             name: "quantityWanted",
             message: "How many would you like to buy?",
 
-          }
-    
-      ]).then(function(userResponse) { 
-        
+        }
 
-        
+    ]).then(function (userResponse) {
+
         console.log(userResponse);
-       });
-    }
+    });
+}
 
 
 function viewAll() {
@@ -75,11 +75,11 @@ function updateQuantity() {
 function checkQuantity() {
     connection.query("SELECT DISTINCT stock_quantity, price FROM products WHERE item_id=?;", function (err, res) {
 
-        if (res < quantityWanted){ 
+        if (res < quantityWanted) {
             console.log("Sorry! There are only" + row.stock_quantity + "items left")
 
-        } else { 
-            if(res > quantityWanted){
+        } else {
+            if (res > quantityWanted) {
                 console.log("Your total is: " + quantityWanted * price);
             }
         }
