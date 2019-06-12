@@ -1,5 +1,6 @@
 var mysql = require("mysql");
 var inquirer = require('inquirer');
+var fs = require('fs')
 
 var connection = mysql.createConnection({
     host: "localhost",
@@ -9,11 +10,43 @@ var connection = mysql.createConnection({
     database: "bamazon_DB"
 });
 
+
 connection.connect(function (err) {
     if (err) throw err;
     console.log("connected as id " + connection.threadId);
-    viewAll();
+    // viewAll();
+    // updateQuantity();   
+    userPrompt();
 });
+
+function userPrompt(){
+
+    inquirer.prompt([
+        {
+          type: "input",
+          name: "itemWanted",
+          message: "What item would you like to buy? [1-10]",
+          
+        //   type: "list",
+        //   name: "itemWanted",
+        //   message: "What item would you like to buy? [1-10]",
+        //   choices: ["1", "2", "3", "4", "5","6","7","8","9","10"]
+        },
+        {
+            type: "input",
+            name: "quantityWanted",
+            message: "How many would you like to buy?",
+
+          }
+    
+      ]).then(function(userResponse) { 
+        
+
+        
+        console.log(userResponse);
+       });
+    }
+
 
 function viewAll() {
     //displays every item
@@ -27,25 +60,36 @@ function viewAll() {
 }
 
 
-
 function updateQuantity() {
-    connection.query("UPDATE products SET stock_quantity = stock_quantity - <x> WHERE Item_id = <x>", function (err, res) {
+    connection.query("SELECT DISTINCT stock_quantity FROM products;", function (err, res) {
+
+        //"UPDATE products SET stock_quantity = stock_quantity - <x> WHERE Item_id = <x>"
         if (err) throw err;
-        console.log(res);
+        console.log(res.item_id);
         connection.end();
     });
 
 };
 
-function totalCost(){
-    connection.query(SELECT sale.quantity*item.price as TOTAL FROM item,sale WHERE item.product_id=sale.product_id;  function(err,res){ LOGIC});
 
-};
+function checkQuantity() {
+    connection.query("SELECT DISTINCT stock_quantity, price FROM products WHERE item_id=?;", function (err, res) {
 
-function checkQuantity(){
-    connection.query( function(err,res){
-        if(quantity < x )
-        console.log("Sorry! There are only" + row.stock_quantity +"items left")
+        if (res < quantityWanted){ 
+            console.log("Sorry! There are only" + row.stock_quantity + "items left")
+
+        } else { 
+            if(res > quantityWanted){
+                console.log("Your total is: " + quantityWanted * price);
+            }
+        }
+
     });
 };
+
+function totalCost() {
+
+};
+
+
 
