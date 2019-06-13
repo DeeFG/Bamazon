@@ -14,13 +14,20 @@ var connection = mysql.createConnection({
 
 connection.connect(function (err) {
     if (err) throw err;
-    console.log("connected as id " + connection.threadId);
+    console.log("YOU ARE CONNECTED " + connection.threadId);
     console.log(Enter);
     viewAll();
-    // checkQuantity();
-    // updateQuantity();   
-    userPrompt();
 });
+
+
+function viewAll() {
+    //displays every item
+    connection.query("SELECT * FROM products", function (err, res) {
+        if (err) throw err;
+        console.log(res);
+        userPrompt();
+    });
+}
 
 function userPrompt() {
     function validateItemWanted(itemNum) {
@@ -45,45 +52,42 @@ function userPrompt() {
 
     ]).then(function (userResponse) {
 
+        function priceCheck() {
+            connection.query("SELECT DISTINCT ?FROM products WHERE item_id= ? userResponse.itemwanted", function (err, res) {
+                console.log(userResponse.itemWanted); ///WORKS
+
+            });
+
+        };
+
 
         function checkQuantity() {
             connection.query("SELECT DISTINCT stock_quantity, price FROM products WHERE item_id=1;", function (err, res) {
-               
                 console.log(res);
-                console.log("Your total cost is $" + userResponse );
-        
+                console.log("Your total cost is $" + userResponse);
+
                 if (res.stock_quantity < userResponse.quantityWanted) {
                     console.log("Sorry! There are only" + res.stock_quantity + userResponse.quantityWanted + "items left")
-        
-                    // } else {
-                    //     if (res > quantityWanted) {
-                    //         console.log("Your total is: " + quantityWanted * price);
-                    //     }
+
                 }
-        
+
             });
         };
 
 
         console.log(userResponse);
-        console.log(userResponse.itemWanted.price);
-
-        console.log("Your total cost is $" + userResponse.quantityWanted * userResponse.itemWanted.price);
+        console.log(priceCheck())
+        // match user input of otem to price in sql data base
+        //multiply  ^^ byt  user guess quantity
+        // structure data so it sanatizes using ?????? 
+        console.log("Your total cost is $" + userResponse.quantityWanted + " ??????" + userResponse.itemWanted); //WORKS
 
 
     });
 }
 
 
-function viewAll() {
-    //displays every item
-    connection.query("SELECT * FROM products", function (err, res) {
-        if (err) throw err;
-        console.log(res);
-        connection.end();
-    });
 
-}
 
 
 function updateQuantity(userResponse) {
@@ -100,10 +104,7 @@ function updateQuantity(userResponse) {
 
 
 
-function totalCost() {
-    // console.log("YOut total is $" + userResponse.quantityWanted * userResponse.itemWanted +);
 
-};
 
 
 

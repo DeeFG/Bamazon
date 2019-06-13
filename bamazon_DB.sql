@@ -33,3 +33,9 @@ VALUES ("Necklace","Jewlery",100.00,25);
 
 INSERT INTO products(product_name,department_name,price,stock_quantity)
 VALUES ("Braclet","Jewlery",70.80,25);
+
+SELECT * FROM bamazon_DB.products;
+SELECT DISTINCT stock_quantity FROM products;
+SELECT DISTINCT stock_quantity, price FROM products WHERE item_id=1 ;
+-- //checks for price
+SELECT DISTINCT price FROM products WHERE item_id=1 ;
