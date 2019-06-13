@@ -16,23 +16,25 @@ connection.connect(function (err) {
     if (err) throw err;
     console.log("connected as id " + connection.threadId);
     console.log(Enter);
-     // viewAll();
+    viewAll();
+    // checkQuantity();
     // updateQuantity();   
     userPrompt();
 });
 
 function userPrompt() {
+    function validateItemWanted(itemNum) {
+        return itemNum !== '';
+    }
+
 
     inquirer.prompt([
         {
             type: "input",
             name: "itemWanted",
             message: "Please type the item id number you'd like to buy",
+            validate: validateItemWanted
 
-            //   type: "list",
-            //   name: "itemWanted",
-            //   message: "What item would you like to buy? [1-10]",
-            //   choices: ["1", "2", "3", "4", "5","6","7","8","9","10"]
         },
         {
             type: "input",
@@ -42,18 +44,33 @@ function userPrompt() {
         }
 
     ]).then(function (userResponse) {
-        // TEST 
+
+
+        function checkQuantity() {
+            connection.query("SELECT DISTINCT stock_quantity, price FROM products WHERE item_id=1;", function (err, res) {
+               
+                console.log(res);
+                console.log("Your total cost is $" + userResponse );
         
-let for( i=0; i< userResponse.length ; I++ ){
-console.log(JSON.parse(userResponse[0]));
-console.log(JSON.parse(userResponse[1]));
-    let item = JSON.parse(userResponse[0])
-    let quantity= JSON.parse(userResponse[1])
-    //var parsedObjData =  JSON.parse(userResponse);
-}
-        //TEST
+                if (res.stock_quantity < userResponse.quantityWanted) {
+                    console.log("Sorry! There are only" + res.stock_quantity + userResponse.quantityWanted + "items left")
         
+                    // } else {
+                    //     if (res > quantityWanted) {
+                    //         console.log("Your total is: " + quantityWanted * price);
+                    //     }
+                }
+        
+            });
+        };
+
+
         console.log(userResponse);
+        console.log(userResponse.itemWanted.price);
+
+        console.log("Your total cost is $" + userResponse.quantityWanted * userResponse.itemWanted.price);
+
+
     });
 }
 
@@ -66,11 +83,10 @@ function viewAll() {
         connection.end();
     });
 
-
 }
 
 
-function updateQuantity() {
+function updateQuantity(userResponse) {
     connection.query("SELECT DISTINCT stock_quantity FROM products;", function (err, res) {
 
         //"UPDATE products SET stock_quantity = stock_quantity - <x> WHERE Item_id = <x>"
@@ -82,22 +98,10 @@ function updateQuantity() {
 };
 
 
-function checkQuantity() {
-    connection.query("SELECT DISTINCT stock_quantity, price FROM products WHERE item_id=?;", function (err, res) {
 
-        if (res < quantityWanted) {
-            console.log("Sorry! There are only" + row.stock_quantity + "items left")
-
-        } else {
-            if (res > quantityWanted) {
-                console.log("Your total is: " + quantityWanted * price);
-            }
-        }
-
-    });
-};
 
 function totalCost() {
+    // console.log("YOut total is $" + userResponse.quantityWanted * userResponse.itemWanted +);
 
 };
 
