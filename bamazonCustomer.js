@@ -30,17 +30,16 @@ function viewAll() {
 }
 
 function userPrompt() {
-    function validateItemWanted(itemNum) {
+    function validateitemID(itemNum) {
         return itemNum !== '';
     }
-
 
     inquirer.prompt([
         {
             type: "input",
-            name: "itemWanted",
+            name: "itemID",
             message: "Please type the item id number you'd like to buy",
-            validate: validateItemWanted
+            validate: validateitemID
 
         },
         {
@@ -53,9 +52,14 @@ function userPrompt() {
     ]).then(function (userResponse) {
 
         function priceCheck() {
-            connection.query("SELECT DISTINCT ?FROM products WHERE item_id= ? userResponse.itemwanted", function (err, res) {
-                console.log(userResponse.itemWanted); ///WORKS
+            connection.query("SELECT * FROM products WHERE ? ", {
+                item_id: userResponse.itemID
+            }, function (err, res) {
 
+                if (err) {
+                    throw err;
+                }
+                console.log("Your total cost is $" + +userResponse.quantityWanted * +res[0].price); //WORKS
             });
 
         };
@@ -64,9 +68,9 @@ function userPrompt() {
         function checkQuantity() {
             connection.query("SELECT DISTINCT stock_quantity, price FROM products WHERE item_id=1;", function (err, res) {
                 console.log(res);
-                console.log("Your total cost is $" + userResponse);
+            
 
-                if (res.stock_quantity < userResponse.quantityWanted) {
+                if (res.stock_quantity <= userResponse.quantityWanted) {
                     console.log("Sorry! There are only" + res.stock_quantity + userResponse.quantityWanted + "items left")
 
                 }
@@ -74,13 +78,11 @@ function userPrompt() {
             });
         };
 
-
-        console.log(userResponse);
-        console.log(priceCheck())
+        priceCheck();
+        // console.log(userResponse);
         // match user input of otem to price in sql data base
         //multiply  ^^ byt  user guess quantity
         // structure data so it sanatizes using ?????? 
-        console.log("Your total cost is $" + userResponse.quantityWanted + " ??????" + userResponse.itemWanted); //WORKS
 
 
     });
@@ -91,6 +93,8 @@ function userPrompt() {
 
 
 function updateQuantity(userResponse) {
+
+    // math first then oquery and make a const 
     connection.query("SELECT DISTINCT stock_quantity FROM products;", function (err, res) {
 
         //"UPDATE products SET stock_quantity = stock_quantity - <x> WHERE Item_id = <x>"
