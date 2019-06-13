@@ -42,7 +42,17 @@ function userPrompt() {
         }
 
     ]).then(function (userResponse) {
-
+        // TEST 
+        
+let for( i=0; i< userResponse.length ; I++ ){
+console.log(JSON.parse(userResponse[0]));
+console.log(JSON.parse(userResponse[1]));
+    let item = JSON.parse(userResponse[0])
+    let quantity= JSON.parse(userResponse[1])
+    //var parsedObjData =  JSON.parse(userResponse);
+}
+        //TEST
+        
         console.log(userResponse);
     });
 }
