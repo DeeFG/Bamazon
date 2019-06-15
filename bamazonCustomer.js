@@ -52,41 +52,83 @@ function userPrompt() {
 
     ]).then(function (userResponse) {
 
+
+        priceCheck();
+
         function priceCheck() {
             connection.query("SELECT * FROM products WHERE ? ", {
                 item_id: userResponse.itemID
-            }, function (err, res) {
-                if (err) {
-                    throw err;
-                }
-                console.log("Your total cost is $" + +userResponse.quantityWanted * +res[0].price); //WORKS
-            });
+            },
+                function (err, res) {
+                    if (err) {
+                        throw err;
+                    }
+                    console.log("Your total cost is $" + +userResponse.quantityWanted * +res[0].price); //WORKS
+                    checkQuantity(res);
+
+                });
         };
 
-        function checkQuantity(userResponse) {
-            var newQuantity;
-
-            // const newQuantity = +res[0].stock_quantity - +userResponse.quantityWanted;
-
-            if (stock_quantity < userResponse.quantityWanted){
-                newQuantity = +res[0].stock_quantity - +userResponse.quantityWanted;
-            }
 
 
-                connection.query("UPDATE products SET ?,WHERE ?;", {
-                    stock_quantity: stock_quantity,
+
+        function checkQuantity(resNewVals) {
+
+
+            if (resNewVals[0].stock_quantity >= userResponse.quantityWanted) {
+                let newQuantity = +resNewVals[0].stock_quantity - +userResponse.quantityWanted;
+
+                console.log(resNewVals[0].stock_quantity);
+                console.log(resNewVals[0].item_id);
+
+                connection.query("UPDATE products SET ? WHERE ?;", [{
+                    stock_quantity: newQuantity,
                 },
-                    {
-                        item_id: userResponse.itemID,
-                    },
+                {
+                    item_id: userResponse.itemID,
+                }],
                     function (err, res) {
 
                         if (err) {
                             throw err;
                         }
                         console.log(newQuantity);
+                        connection.end();
+
                     });
+            }   else 
+            {
+                console.log("amount requiered too much"); 
+                connection.end(); 
+            }
         };
+
+
+
+
+
+    });
+}
+
+
+// function updateQuantity(userResponse) {
+//     // math first then oquery and make a const 
+//     connection.query("SELECT DISTINCT stock_quantity FROM products;", function (err, res) {
+
+//         //"UPDATE products SET stock_quantity = stock_quantity - <x> WHERE Item_id = <x>"
+//         if (err) throw err;
+//         console.log(res.item_id);
+//         connection.end();
+//     });
+
+// };
+
+
+
+
+
+
+
 
 
 
@@ -108,34 +150,12 @@ function userPrompt() {
         //     });
         // };
 
-        priceCheck();
-        checkQuantity();
+
+
         // console.log(userResponse);
         // match user input of otem to price in sql data base
         //multiply  ^^ byt  user guess quantity
         // structure data so it sanatizes using ?????? 
-
-
-    });
-}
-
-
-
-
-
-function updateQuantity(userResponse) {
-
-    // math first then oquery and make a const 
-    connection.query("SELECT DISTINCT stock_quantity FROM products;", function (err, res) {
-
-        //"UPDATE products SET stock_quantity = stock_quantity - <x> WHERE Item_id = <x>"
-        if (err) throw err;
-        console.log(res.item_id);
-        connection.end();
-    });
-
-};
-
 
 
 
