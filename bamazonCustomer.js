@@ -1,6 +1,7 @@
 var mysql = require("mysql");
 var inquirer = require('inquirer');
-var fs = require('fs')
+var fs = require('fs');
+var chalk = ('chalk');
 const Enter = "\n\n***[$̲̅(̲̅ιοο̲̅)̲̅$̲̅]***[$̲̅(̲̅ιοο̲̅)̲̅$̲̅]***[$̲̅(̲̅ιοο̲̅)̲̅$̲̅]___WELCOME to BAMAZON, LETS GET STARTED___[$̲̅(̲̅ιοο̲̅)̲̅$̲̅]***[$̲̅(̲̅ιοο̲̅)̲̅$̲̅]***[$̲̅(̲̅ιοο̲̅)̲̅$̲̅]***\n\n "
 
 var connection = mysql.createConnection({
@@ -14,9 +15,9 @@ var connection = mysql.createConnection({
 
 connection.connect(function (err) {
     if (err) throw err;
-    console.log("YOU ARE CONNECTED " + connection.threadId);
-    console.log(Enter);
+    console.log("YOU ARE CONNECTED " + Enter);
     viewAll();
+
 });
 
 
@@ -24,10 +25,15 @@ function viewAll() {
     //displays every item
     connection.query("SELECT * FROM products", function (err, resInventory) {
         if (err) throw err;
+        greetCustomer();
         console.log(resInventory);
         userPrompt();
     });
 }
+
+function greetCustomer() {
+    console.log(Enter);
+};
 
 function userPrompt() {
 
@@ -63,13 +69,11 @@ function userPrompt() {
                     if (err) {
                         throw err;
                     }
-                    console.log("Your total cost is $" + +userResponse.quantityWanted * +res[0].price); //WORKS
+                    console.log("\nYour total cost is $" + +userResponse.quantityWanted * +res[0].price + ".00"); //WORKS
                     checkQuantity(res);
 
                 });
         };
-
-
 
 
         function checkQuantity(resNewVals) {
@@ -77,10 +81,7 @@ function userPrompt() {
 
             if (resNewVals[0].stock_quantity >= userResponse.quantityWanted) {
                 let newQuantity = +resNewVals[0].stock_quantity - +userResponse.quantityWanted;
-
-                console.log(resNewVals[0].stock_quantity);
-                console.log(resNewVals[0].item_id);
-
+                // console.log(resNewVals[0].stock_quantity);
                 connection.query("UPDATE products SET ? WHERE ?;", [{
                     stock_quantity: newQuantity,
                 },
@@ -92,70 +93,20 @@ function userPrompt() {
                         if (err) {
                             throw err;
                         }
-                        console.log(newQuantity);
+                        console.log("\nOnly " + newQuantity + " left in stock!  Get them while there're HOT!\n");
                         connection.end();
 
                     });
-            }   else 
-            {
-                console.log("amount requiered too much"); 
-                connection.end(); 
+            } else {
+                console.log("\nSorry! There are only " + resNewVals[0].stock_quantity + " items left, your order will be back ordered. \n");
+                connection.end();
             }
         };
-
-
-
-
-
     });
 }
 
 
-// function updateQuantity(userResponse) {
-//     // math first then oquery and make a const 
-//     connection.query("SELECT DISTINCT stock_quantity FROM products;", function (err, res) {
 
-//         //"UPDATE products SET stock_quantity = stock_quantity - <x> WHERE Item_id = <x>"
-//         if (err) throw err;
-//         console.log(res.item_id);
-//         connection.end();
-//     });
-
-// };
-
-
-
-
-
-
-
-
-
-
-        // connection.query("UPDATE product SET ? WHERE ?;",  {
-        //      quantity: res[0].stock_quantity,
-        //         id: userResponse.itemID,
-        // },
-        // function (err, res) {
-        //         if (err) {
-        //             throw err;
-        //         }
-
-        //         console.log(t +"check Quant");
-
-        //         if (res[0].stock_quantity <= userResponse.quantityWanted) {
-        //             console.log("Sorry! There are only" + res.stock_quantity + userResponse.quantityWanted + "items left")
-        //         }
-
-        //     });
-        // };
-
-
-
-        // console.log(userResponse);
-        // match user input of otem to price in sql data base
-        //multiply  ^^ byt  user guess quantity
-        // structure data so it sanatizes using ?????? 
 
 
 
