@@ -6,9 +6,9 @@ const Enter = "\n*[$̲̅(̲̅ιοο̲̅)̲̅$̲̅]___WELCOME to BAMAZON, LETS GE
 
 var connection = mysql.createConnection({
     host: "localhost",
-    port: 8889,
-    user: "root",
-    password: "root",
+    port: ,
+    user: "",
+    password: "",
     database: "bamazon_DB"
 });
 
