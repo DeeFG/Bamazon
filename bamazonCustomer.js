@@ -1,8 +1,8 @@
 var mysql = require("mysql");
 var inquirer = require('inquirer');
 var fs = require('fs');
-var chalk = ('chalk');
-const Enter = "\n\n***[$̲̅(̲̅ιοο̲̅)̲̅$̲̅]***[$̲̅(̲̅ιοο̲̅)̲̅$̲̅]***[$̲̅(̲̅ιοο̲̅)̲̅$̲̅]___WELCOME to BAMAZON, LETS GET STARTED___[$̲̅(̲̅ιοο̲̅)̲̅$̲̅]***[$̲̅(̲̅ιοο̲̅)̲̅$̲̅]***[$̲̅(̲̅ιοο̲̅)̲̅$̲̅]***\n\n "
+var chalk = require('chalk');
+const Enter = "\n*[$̲̅(̲̅ιοο̲̅)̲̅$̲̅]___WELCOME to BAMAZON, LETS GET STARTED___[$̲̅(̲̅ιοο̲̅)̲̅$̲̅]**\n\n "
 
 var connection = mysql.createConnection({
     host: "localhost",
@@ -12,10 +12,12 @@ var connection = mysql.createConnection({
     database: "bamazon_DB"
 });
 
+function greetCustomer() {
+    console.log(chalk.yellow(Enter));
+};
 
 connection.connect(function (err) {
     if (err) throw err;
-    console.log("YOU ARE CONNECTED " + Enter);
     viewAll();
 
 });
@@ -31,9 +33,7 @@ function viewAll() {
     });
 }
 
-function greetCustomer() {
-    console.log(Enter);
-};
+
 
 function userPrompt() {
 
@@ -69,7 +69,7 @@ function userPrompt() {
                     if (err) {
                         throw err;
                     }
-                    console.log("\nYour total cost is $" + +userResponse.quantityWanted * +res[0].price + ".00"); //WORKS
+                    console.log(chalk.blue("\nYour total cost is $" + +userResponse.quantityWanted * +res[0].price + ".00")); //WORKS
                     checkQuantity(res);
 
                 });
@@ -93,12 +93,12 @@ function userPrompt() {
                         if (err) {
                             throw err;
                         }
-                        console.log("\nOnly " + newQuantity + " left in stock!  Get them while there're HOT!\n");
+                        console.log(chalk.blue("\nOnly " + newQuantity + " left in stock!  Get them while there're HOT!\n"));
                         connection.end();
 
                     });
             } else {
-                console.log("\nSorry! There are only " + resNewVals[0].stock_quantity + " items left, your order will be back ordered. \n");
+                console.log(chalk.red("\nSorry! There are only " + resNewVals[0].stock_quantity + " items left, your order will be back ordered. \n"));
                 connection.end();
             }
         };
