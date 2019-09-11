@@ -4,8 +4,7 @@
 
 
 # Bamazon
-
-## [See demoo video above Bamazon]
+## See demo video above Bamazon
 
 ## How it Works :question:
 ### An Amazon-like storefront using MySQL skills. The app will take in orders from customers and deplete stock from the store's inventory. 
